@@ -38,6 +38,7 @@ public class huanche  extends JFrame implements ActionListener{
     private JButton buttonOfzuche;
     private JLabel label1;
     private JLabel label2;
+    private JLabel label3;
     private JTextField field;
     private JButton button_back;
     public huanche()
@@ -47,7 +48,7 @@ public class huanche  extends JFrame implements ActionListener{
         setVisible(true);
 //			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(700, 200, 800, 500);
-        setTitle("车辆信息管理");
+        setTitle("还车信息管理");
 
         xinXiLiuLan();
     }
@@ -104,7 +105,7 @@ public class huanche  extends JFrame implements ActionListener{
     void init()
     {
 
-        label1 = new JLabel("汽车租赁信息管理系统---未还人车辆");
+        label1 = new JLabel("已租车辆浏览");
 
         buttonOfXinxiliulan = new JButton("   刷新      ");
         buttonOfXinxiliulan.addActionListener(this);
@@ -114,7 +115,7 @@ public class huanche  extends JFrame implements ActionListener{
         button_back.addActionListener(this);
 
         label2 = new JLabel("请输入还车编号：");
-
+        label3 = new JLabel("请输入租赁时长（单位：日）");
         field = new JTextField();
         field2 = new JTextField();
         field3 = new JTextField();
@@ -130,6 +131,10 @@ public class huanche  extends JFrame implements ActionListener{
         box1.add(label2);
         box1.add(Box.createVerticalStrut(15));
         box1.add(field);
+        box1.add(Box.createVerticalStrut(15));
+        box1.add(label3);
+        box1.add(Box.createVerticalStrut(15));
+        box1.add(field3);
         box1.add(Box.createVerticalStrut(5));
         box1.add(buttonOfzuche);
         box1.add(Box.createVerticalStrut(5));
@@ -191,33 +196,48 @@ public class huanche  extends JFrame implements ActionListener{
         else if(source == buttonOfzuche){
             conn.connDB();
             try {
-                int numberint = Integer.parseInt(field.getText());
-                conn.stmt = conn.con.createStatement();
-                String str_number_check = "select carnumber from carlist  ";
-                conn.rs = conn.stmt.executeQuery(str_number_check);
-                boolean flag = false;
-                while (conn.rs.next()) {
-                    if (conn.rs.getString(1).equals(field.getText())) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag == false) {
-                    JOptionPane.showMessageDialog(null, "未检测到该车辆");
+                if (field.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null, "请填写完整！");
+                } else if (!isNumeric(field.getText())) {
+                    JOptionPane.showMessageDialog(null, "序号 请输入整数！");
+                } else if (!isNumeric(field3.getText())) {
+                    JOptionPane.showMessageDialog(null, "请填写完整！");
+                } else if (!isNumeric(field3.getText())) {
+                    JOptionPane.showMessageDialog(null, "日期 请输入整数！");
                 } else {
-                    String str_check = "select * from carlist  where carnumber=" + field.getText();
-                    conn.rs = conn.stmt.executeQuery(str_check);
-                    conn.rs.next();
-                    String statement = conn.rs.getString(6);
-                    if (statement.equals("no lend")) {
-                        JOptionPane.showMessageDialog(null, "该车辆未出租");
-                    } else if (statement.equals("repairing")) {
-                        JOptionPane.showMessageDialog(null, "该车辆正在修理");
+                    int numberint = Integer.parseInt(field.getText());
+                    conn.stmt = conn.con.createStatement();
+                    String str_number_check = "select carnumber from carlist  ";
+                    conn.rs = conn.stmt.executeQuery(str_number_check);
+                    boolean flag = false;
+                    while (conn.rs.next()) {
+                        if (conn.rs.getString(1).equals(field.getText())) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag == false) {
+                        JOptionPane.showMessageDialog(null, "未检测到该车辆");
                     } else {
-                        String str = "update carlist set carhire='no lend'where carnumber=" + field.getText() + "";
-                        conn.stmt.executeUpdate(str);
-                        JOptionPane.showMessageDialog(null, "还车车成功！");
-                        conn.closeDB();
+
+                        String str_check = "select * from carlist  where carnumber=" + field.getText();
+                        conn.rs = conn.stmt.executeQuery(str_check);
+                        conn.rs.next();
+                        String statement = conn.rs.getString(6);
+                        if (statement.equals("no lend")) {
+                            JOptionPane.showMessageDialog(null, "该车辆未出租");
+                        } else if (statement.equals("repairing")) {
+                            JOptionPane.showMessageDialog(null, "该车辆正在修理");
+                        } else {
+                            String str = "update carlist set carhire='no lend'where carnumber=" + field.getText() + "";
+                            conn.stmt.executeUpdate(str);
+                            conn.stmt = conn.con.createStatement();
+                            String add ="update carlist set Time_of_lease=Time_of_lease+"+field3.getText()+" where carnumber="+field.getText()+"";
+                            System.out.println(add);
+                            conn.stmt.executeUpdate(add);
+                            JOptionPane.showMessageDialog(null, "还车成功！");
+                            conn.closeDB();
+                        }
                     }
                 }
             }catch(SQLException e1){

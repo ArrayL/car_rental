@@ -239,25 +239,7 @@ public class checkcar extends JFrame implements ActionListener{
                                     JOptionPane.showMessageDialog(null,"删除成功！");
 
                                 }
-                                else
-                                {
-                                    try
-                                    {
-                                        conn.stmt = conn.con.createStatement();
-                                        String sql2 = "delete from carlist where carnumber='"+field.getText()+"';";
-                                        conn.stmt.executeUpdate(sql2);
-                                    }
-                                    catch (SQLException e1)
-                                    {
-                                        e1.printStackTrace();
-                                    }
-                                    conn.closeDB();
-                                    repaint();
-                                    field.setText("");
-                                    JOptionPane.showMessageDialog(null,"删除成功！");
 
-
-                                }
 
 
                             }

@@ -1,6 +1,4 @@
 package method;
-
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -17,38 +15,32 @@ import window.*;
  * 信息录入界面
  */
 
-public class Luru extends JFrame implements ActionListener {
+public class revert extends JFrame implements ActionListener {
 
     JTextField field1,field2,field3,field4,field5,field6;
     Box box1,box2,box3,box4,box5,box6,box7,baseBox;
     JButton buttonOfQueDing,buttonOfReset,buttonOfQuXIAO;
     connect conn=new connect();
 
-    public Luru()
+    public revert()
     {
 
         init();
         setVisible(true);
 //		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(550, 200, 550, 280);
-        setTitle("车辆信息录入界面");
+        setTitle("车辆归还录入界面");
     }
 
     void init()
     {
         JLabel label1 = new JLabel("车辆编号: ");
-        JLabel label2 = new JLabel("车辆名称: ");
-        JLabel label3 = new JLabel("车辆颜色: ");
-        JLabel label4 = new JLabel("车辆类型:");
-        JLabel label5 = new JLabel("车辆计价: ");
-        JLabel label6 = new JLabel("借出状态:");
+        JLabel label2 = new JLabel("维修价格: ");
+
 
         field1 = new JTextField();
         field2 = new JTextField();
-        field3 = new JTextField();
-        field4 = new JTextField();
-        field5 = new JTextField();
-        field6 = new JTextField();
+
 
         buttonOfQueDing = new JButton("提交");
         buttonOfReset = new JButton("重置");
@@ -72,33 +64,7 @@ public class Luru extends JFrame implements ActionListener {
         box2.add(field2);
         box2.add(box2.createHorizontalStrut(5));
 
-        box3 = Box.createHorizontalBox();
-        box3.add(box3.createHorizontalStrut(5));
-        box3.add(label3);
-        box3.add(box3.createHorizontalStrut(5));
-        box3.add(field3);
-        box3.add(box3.createHorizontalStrut(5));
 
-        box4 = Box.createHorizontalBox();
-        box4.add(box4.createHorizontalStrut(5));
-        box4.add(label4);
-        box4.add(box4.createHorizontalStrut(5));
-        box4.add(field4);
-        box4.add(box4.createHorizontalStrut(5));
-
-        box5 = Box.createHorizontalBox();
-        box5.add(box5.createHorizontalStrut(5));
-        box5.add(label5);
-        box5.add(box5.createHorizontalStrut(5));
-        box5.add(field5);
-        box5.add(box5.createHorizontalStrut(5));
-
-        box6 = Box.createHorizontalBox();
-        box6.add(box6.createHorizontalStrut(5));
-        box6.add(label6);
-        box6.add(box6.createHorizontalStrut(5));
-        box6.add(field6);
-        box6.add(box6.createHorizontalStrut(5));
 
         box7 = Box.createHorizontalBox();
         box7.add(box7.createHorizontalStrut(5));
@@ -114,14 +80,6 @@ public class Luru extends JFrame implements ActionListener {
         baseBox.add(box1);
         baseBox.add(Box.createVerticalStrut(10));
         baseBox.add(box2);
-        baseBox.add(Box.createVerticalStrut(10));
-        baseBox.add(box3);
-        baseBox.add(Box.createVerticalStrut(10));
-        baseBox.add(box4);
-        baseBox.add(Box.createVerticalStrut(10));
-        baseBox.add(box5);
-        baseBox.add(Box.createVerticalStrut(10));
-        baseBox.add(box6);
         baseBox.add(Box.createVerticalStrut(10));
         baseBox.add(box7);
         baseBox.add(Box.createVerticalStrut(15));
@@ -146,11 +104,8 @@ public class Luru extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         String number = field1.getText();
-        String carname = field2.getText() ;
-        String carcolor = field3.getText() ;
-        String carbrand = field4.getText();
-        String price = field5.getText();
-        String hire = field6.getText();
+        String price = field2.getText() ;
+
 //		if(field6.getText().equals("是")&&field6.getText().equals("已经")&&field6.getText().equals("已租用")&&field6.getText().equals("已"))
 //		{
 //			hire = "1";
@@ -163,7 +118,7 @@ public class Luru extends JFrame implements ActionListener {
 
         if(source == buttonOfQueDing)
         {
-            if(number.equals("")||carname.equals("")||carcolor.equals("")||carbrand.equals("")||price.equals("")||hire.equals(""))
+            if(number.equals("")||price.equals(""))
             {
                 JOptionPane.showMessageDialog(null, "请填写完整！");
             }
@@ -174,21 +129,43 @@ public class Luru extends JFrame implements ActionListener {
             else
             {
                 conn.connDB();
-                try {
-                    if ((!hire.equals("lended")) && (!hire.equals("no lend")) && (!hire.equals("repairing"))) {
-                        JOptionPane.showMessageDialog(null, "状态录入错误：输入的状态只能为    1.lended    2.no lend   3.repairing");
-                    } else {
-                        int numberint = Integer.parseInt(field1.getText());
-                        conn.stmt = conn.con.createStatement();
-                        String str = "insert into carlist (carnumber,carname,carcolor,carbrand,carprice,carhire,Time_of_lease,Profit_of_lease,Times_of_repair,Pay_for_repair,total_of_profit)values('" + numberint + "','" + carname + "','" + carcolor + "','" + carbrand + "','" + price + "','" + hire + "','"+0+"','"+0+"','"+0+"','"+0+"','"+0+"');";
-                        System.out.println(str);
-                        conn.stmt.executeUpdate(str);
-                        JOptionPane.showMessageDialog(null, "录入成功！");
-                        conn.closeDB();
-                        this.dispose();
+                try{
+                    int numberint2 = Integer.parseInt(number);
+                    conn.stmt = conn.con.createStatement();
+                    String str2="select carnumber from carlist where carhire='repairing'";
+
+                    conn.rs = conn.stmt.executeQuery(str2);
+                    int flag2=0;
+                    while(conn.rs.next()) {
+                        String carall = conn.rs.getString("carnumber");
+                        if(field1.getText().equals(carall))
+                        {flag2=1;}
 
                     }
-                }catch (SQLException e1) {
+                    System.out.println(flag2);
+
+
+
+
+
+                    if(flag2==1)
+                    {
+                        String str3 = "update carlist set carhire='no lend'where carnumber="+field1.getText()+"";
+                        conn.stmt.executeUpdate(str3);
+                        String addtime ="update carlist set Times_of_repair=Times_of_repair+1 where carnumber="+field1.getText()+"";
+                        conn.stmt.executeUpdate(addtime);
+                        String addprice ="update carlist set Pay_for_repair=Pay_for_repair+"+field2.getText()+" where carnumber="+field1.getText()+"";
+                        conn.stmt.executeUpdate(addprice);
+                        JOptionPane.showMessageDialog(null, "返还成功！");
+                        conn.closeDB();
+                    }
+                    else {
+
+                        JOptionPane.showMessageDialog(null, "返还失败！车辆未在维修状态");
+                    }
+                    //this.dispose();
+                    //new WindowBoxLayout2();
+                } catch (SQLException e1) {
 //				e1.printStackTrace();
 
                     JOptionPane.showMessageDialog(null, "此编号已经被使用，请换一个编号！");
