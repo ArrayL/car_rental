@@ -67,22 +67,22 @@ public class revert extends JFrame implements ActionListener {
 
 
         box7 = Box.createHorizontalBox();
-        box7.add(box7.createHorizontalStrut(5));
+        box7.add(box7.createHorizontalStrut(10));
         box7.add(buttonOfQueDing);
-        box7.add(box7.createHorizontalStrut(5));
+        box7.add(box7.createHorizontalStrut(10));
         box7.add(buttonOfQuXIAO);
         box7.add(box7.createHorizontalStrut(5));
         box7.add(buttonOfReset);
         box7.add(box7.createHorizontalStrut(5));
 
         baseBox = Box.createVerticalBox();
-        baseBox.add(Box.createVerticalStrut(15));
+        baseBox.add(Box.createVerticalStrut(5));
         baseBox.add(box1);
-        baseBox.add(Box.createVerticalStrut(10));
+        baseBox.add(Box.createVerticalStrut(5));
         baseBox.add(box2);
-        baseBox.add(Box.createVerticalStrut(10));
+        baseBox.add(Box.createVerticalStrut(5));
         baseBox.add(box7);
-        baseBox.add(Box.createVerticalStrut(15));
+        baseBox.add(Box.createVerticalStrut(5));
 
         add(baseBox);
 
